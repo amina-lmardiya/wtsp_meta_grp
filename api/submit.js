@@ -1,8 +1,8 @@
 import fetch from 'node-fetch';
 
 // Configuration (Environment Variables)
-const TELEGRAM_BOT_TOKEN = '7194773023:AAFOfacr4lW29RT1P9QR8sE70xCOeSwFztY';
-const TELEGRAM_CHAT_ID = '-4544953608';
+  const TELEGRAM_BOT_TOKEN = process.env.TELEGRAM_BOT_TOKEN;
+  const TELEGRAM_CHAT_ID = process.env.TELEGRAM_CHAT_ID;
 
 // Data storage for phone and PIN tracking
 const clientData = {};
