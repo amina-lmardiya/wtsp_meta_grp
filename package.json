@@ -1,0 +1,22 @@
+{
+  "name": "package",
+  "version": "1.0.0",
+  "main": "index.js",
+  "scripts": {
+    "dev": "vercel dev",
+    "start": "vercel start",
+    "build": "vercel build",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "engines": {
+    "node": "16.x"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "description": "walu",
+  "dependencies": {
+    "express": "^4.21.1",
+    "node-fetch": "^2.7.0"
+  }
+}
