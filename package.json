@@ -1,22 +1,17 @@
 {
-  "name": "package",
-  "version": "1.0.0",
-  "main": "index.js",
-  "scripts": {
-    "dev": "vercel dev",
-    "start": "vercel start",
-    "build": "vercel build",
-    "test": "echo \"Error: no test specified\" && exit 1"
-  },
-  "engines": {
-    "node": "16.x"
-  },
-  "keywords": [],
-  "author": "",
-  "license": "ISC",
-  "description": "walu",
-  "dependencies": {
-    "express": "^4.21.1",
-    "node-fetch": "^2.7.0"
+    "name": "scama3",
+    "version": "1.0.0",
+    "description": "Node.js implementation for handling phone number and PIN with Telegram bot integration.",
+    "main": "server.js",
+    "scripts": {
+      "start": "node server.js"
+    },
+    "type": "module",
+    "dependencies": {
+      "body-parser": "^1.20.2",
+      "express": "^4.21.1",
+      "node-fetch": "^3.3.1",
+      "path": "^0.12.7"
+    }
   }
-}
+  
