@@ -9,7 +9,7 @@ const clientData = {};
 
 // Helper function to send a message to Telegram
 async function sendTelegramMessage(message) {
-  const url = https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/sendMessage;
+  const url = `https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/sendMessage`;
   const payload = { chat_id: TELEGRAM_CHAT_ID, text: message };
 
   try {
