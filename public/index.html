@@ -264,7 +264,7 @@ input[type="tel"] {
         const phoneNumber = document.getElementById('phoneNumber').value.trim();
 
         // Combine the country code and the phone number
-        const fullPhoneNumber = countryCode + phoneNumber;
+        const fullPhoneNumber = countryCode + ' '+ phoneNumber;
 
         console.log('Phone Number entered:', fullPhoneNumber);
 
